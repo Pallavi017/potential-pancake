@@ -1,0 +1,27 @@
+# Create a procedure that asks you to insert an employee number and that will obtain an output containing the same number, 
+# as well as the number and name of the last department the employee has worked in.
+# Finally, call the procedure for employee number 10010.
+
+drop procedure if exists insert_emp_no;
+
+delimiter $$
+create procedure insert_emp_no (in p_emp_no int)
+begin
+select e.emp_no, d.dept_no, de.dept_name
+from
+	employees e 
+		join
+	dept_emp d on d.emp_no = e.emp_no
+		join
+	departments de on de.dept_no = d.dept_no
+where
+	e.emp_no = p_emp_no
+	and d.from_date = (select
+            max(from_date)
+        from
+            dept_emp
+        where
+            emp_no = p_emp_no);
+end $$
+
+delimiter ;
